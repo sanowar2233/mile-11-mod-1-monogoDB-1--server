@@ -27,12 +27,33 @@ const users=[
 const { MongoClient } = require('mongodb');
 const uri = "mongodb+srv://dbuser1:uN2GDkop10b8aXnH@cluster0.ykwnqlz.mongodb.net/?retryWrites=true&w=majority";
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-client.connect(err => {
-  const collection = client.db("test").collection("devices");
-  // perform actions on the collection object
-  console.log('database connected')
-  client.close();
-});
+
+async function run(){
+
+    try{
+        const userCollection = client.db('simpleNode').collection('users');
+        const user={name:'alman khan', email:'alman@gmail.com'}
+       
+
+        app.post('/users', async (req,res)=>{
+            console.log('post api called')
+            const user=req.body;
+            user.id=users.length + 1;
+            const result =await userCollection.insertOne(user)
+            user.id=result.insertedId;
+            res.send(user)
+        })
+
+    }
+    finally{
+
+    }
+
+}
+
+run().catch(err=>console.log(err))
+
+
 
 
 
@@ -49,14 +70,7 @@ app.get('/users',(req,res)=>{
    
 })
 
-app.post('/users',(req,res)=>{
-    console.log('post api called')
-    const user=req.body;
-    user.id=users.length + 1;
-    users.push(user)
-    console.log(user)
-    res.send(user)
-})
+
 
 app.listen(port, ()=>{
     console.log(`simple  server ${port}`)
